@@ -14,3 +14,17 @@
     window.toneMap = toneMap;
     window.pccs2rgb = pccs2rgb;
 })();
+
+const TONES = 'p ltg g dkg lt sf d dk b s dp v'.split(" ");
+const TONE_NO_LIST = TONES.flatMap(t => {
+    const a = [];
+    for (let i = 1; i < 25; i++) {
+        if (t !== 'v' && i % 2 === 1) {
+            // NOP
+        } else {
+            a.push(`${t}${i}`);
+        }
+    }
+    return a;
+});
+
