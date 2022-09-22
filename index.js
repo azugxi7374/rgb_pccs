@@ -2,14 +2,24 @@ document.addEventListener('DOMContentLoaded', () => {
     init();
 });
 function init() {
-    // const canvas = document.getElementById('canvas')
-    // const ctx = canvas.getContext('2d')
     const container = document.getElementById('container');
-    const { canvas, render: renderPCCS } = createPCCSToneView(400);
 
-    const state = { rgb: [255, 255, 0] }
-    renderPCCS(state)
+    const components = [];
+    let state = { rgb: [255, 255, 0] };
+    const updateState = (updFunc) => {
+        state = updFunc(state);
+        components.forEach(render => render(state));
+    }
 
+    const { canvas, render: renderPCCS } = createPCCSToneView(400, updateState);
+    const { elem: rgbView, render: renderCaption } = createRGBView(400, updateState);
+
+    components.push(renderPCCS);
+    components.push(renderCaption);
+
+    updateState((s) => s);
+
+    container.appendChild(rgbView);
     container.appendChild(canvas);
     /*
     canvas.addEventListener('mousemove', (e) => {
@@ -28,8 +38,30 @@ function init() {
     */
 };
 
-// render, 
-function createPCCSToneView(width) {
+function createRGBView(width, updateState) {
+    const div = document.createElement('div');
+    div.style = `width:${width}px; height: 2em;`
+
+    function render({ rgb }) {
+        const rgbstr = rgb2str(rgb);
+        div.innerHTML = `
+            <span style="color:${rgbstr};">\u{25a0}</span>
+            <span>${rgbstr}</span>
+            <input type="color" value="${rgbstr}">
+        `
+        const input = div.querySelector('input');
+        input.addEventListener('change', (e) => {
+            updateState((s) => ({ ...s, rgb: str2rgb(e.target.value) }));
+        });
+    }
+    return {
+        elem: div,
+        render,
+    }
+}
+
+
+function createPCCSToneView(width, updateState) {
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = width * 1;
@@ -65,14 +97,24 @@ function createPCCSToneView(width) {
                 ctx.stroke();
             }
         }
-        const contains = (mx, my) => {
+        const contains = ({ mx, my, tone, hue }) => {
             const dx = mx - x0;
             const dy = my - y0;
             const mr = Math.sqrt(dx * dx + dy * dy);
-            const a = (Math.atan(dx, dy) + 2 * Math.PI) % (2 * Math.PI);
-            return r2 <= mr && mr <= r1 && a1 <= a && a <= a2;
+            const a = norm2PI(Math.atan2(dy, dx));
+            // ↓ norm(a1 -> a) + norm(a -> a2) <= 2PI
+            const a1_a_a2 = norm2PI(a - a1) + norm2PI(a2 - a);
+            // console.log({ a, a1, a2, a1_a_a2 })
+            // console.log({ i }, r2 <= mr && mr <= r1 && a1 <= a && a <= a2)
+            return r2 <= mr && mr <= r1 && a1_a_a2 <= Math.PI * 2;
         }
-        elemList.push([render, contains]);
+        const changeToneHue = (tone, hue) => {
+            return {
+                tone: (i + 1) % 2 === 1 ? 'v' : tone,
+                hue: i + 1
+            }
+        }
+        elemList.push({ render, contains, changeToneHue });
     }
 
     const tones = 'p ltg g dkg lt sf d dk b s dp v'.split(" ");
@@ -89,12 +131,17 @@ function createPCCSToneView(width) {
         const xx = x3 + (r4 + r5) * (dx_4[i] + 0.5) / 4;
         const yy = y3 + (r3 + r3) * (dy_4[i] + 0.5) / 4;
 
+        function isDeactive(hue) { return hue % 2 === 1 && tones[i] !== 'v' }
         const render = ({ hue, tone }) => {
             ctx.beginPath();
             ctx.arc(xx, yy, r6, 0, 2 * Math.PI);
             ctx.closePath();
 
-            ctx.fillStyle = toneMap[`${tones[i]}${hue}`];
+            if (isDeactive(hue)) {
+                ctx.fillStyle = "#dddddd";
+            } else {
+                ctx.fillStyle = toneMap[`${tones[i]}${hue}`];
+            }
             ctx.fill();
             if (tone === tones[i]) {
                 ctx.strokeStyle = "#222222";
@@ -102,16 +149,39 @@ function createPCCSToneView(width) {
                 ctx.stroke();
             }
         }
-        const contains = (mx, my) => {
-            const dx = mx - xx;
-            const dy = my - yy;
-            const mr = Math.sqrt(dx * dx + dy * dy);
-            return mr <= r6;
+        const contains = ({ mx, my, tone: currentTone, hue }) => {
+            if (isDeactive(hue)) {
+                return false;
+            } else {
+                const dx = mx - xx;
+                const dy = my - yy;
+                const mr = Math.sqrt(dx * dx + dy * dy);
+                return mr <= r6;
+            }
         }
-        elemList.push([render, contains]);
+        const changeToneHue = (tone, hue) => {
+            return { tone: tones[i], hue: hue }
+        }
+        elemList.push({ render, contains, changeToneHue });
     }
 
-    // onclickとか定義
+    let handlerArg = { tone: 8, hue: 'v' }
+    canvas.addEventListener('click', (e) => {
+        (({ tone: tone0, hue: hue0 }) => {
+            const mx = e.offsetX;
+            const my = e.offsetY
+            for (const { contains, changeToneHue } of elemList) {
+                if (contains({ mx, my, tone: tone0, hue: hue0 })) {
+                    const { tone, hue } = changeToneHue(tone0, hue0);
+                    // console.log({ tone0, hue0, tone, hue });
+                    updateState((s) => ({
+                        ...s,
+                        rgb: str2rgb(toneMap[`${tone}${hue}`])
+                    }));
+                }
+            }
+        })(handlerArg);
+    });
 
     function render({ rgb }) {
         function rgb2PCCSHT(rgb) {
@@ -130,8 +200,10 @@ function createPCCSToneView(width) {
         const toneHue = rgb2PCCSHT(rgb);
         const hue = toneHue.replace(/[a-z]+/, "")
         const tone = toneHue.replace(/[0-9]+/, "")
-        console.log(toneHue, hue, tone);
-        for (let [r, _] of elemList) {
+        handlerArg = { tone, hue }
+        // console.log(toneHue, hue, tone);
+        ctx.clearRect(0, 0, width, width);
+        for (const { render: r } of elemList) {
             r({ hue, tone });
         }
     }
@@ -157,3 +229,7 @@ function colorDist(rgb1, rgb2) {
     return Math.sqrt(d2);
 }
 
+function norm2PI(a) {
+    const pi2 = Math.PI * 2;
+    return ((a % pi2) + pi2) % pi2
+}
