@@ -240,6 +240,15 @@ function createPCCSToneView(width, updateState) {
                 ctx.lineWidth = 3;
                 ctx.stroke();
             }
+
+            {
+                ctx.fillStyle = "#ffffff";
+                const xx = x0 + (r1 + r2) / 2 * Math.cos((a1 + a2) / 2);
+                const yy = y0 + (r1 + r2) / 2 * Math.sin((a1 + a2) / 2);
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(i + 1, xx, yy);
+            }
         }
         const contains = ({ mx, my, tone, hue }) => {
             const dx = mx - x0;
@@ -283,15 +292,25 @@ function createPCCSToneView(width, updateState) {
 
             if (isDeactive(hue)) {
                 ctx.fillStyle = "#dddddd";
+                ctx.fill();
             } else {
                 ctx.fillStyle = toneMap[`${tones[i]}${hue}`];
+                ctx.fill();
+                if ("p lt ltg sf b".split(" ").includes(tones[i])) {
+                    ctx.fillStyle = "#000000";
+                } else {
+                    ctx.fillStyle = "#ffffff";
+                }
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(tones[i], xx, yy);
             }
-            ctx.fill();
             if (tone === tones[i]) {
                 ctx.strokeStyle = "#222222";
                 ctx.lineWidth = 3;
                 ctx.stroke();
             }
+
         }
         const contains = ({ mx, my, tone: currentTone, hue }) => {
             if (isDeactive(hue)) {
