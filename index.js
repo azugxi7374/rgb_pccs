@@ -14,16 +14,19 @@ function init() {
     const { canvas, render: renderPCCS } = createPCCSToneView(300, updateState);
     const { elem: rgbView, render: renderCaption } = createRGBView(300, updateState);
     const { elem: circle, render: renderCircle } = createColorCircle(300, updateState);
+    const { elem: rgbBar, render: renderRGBBar } = createRGBBar(300, updateState);
 
     components.push(renderPCCS);
     components.push(renderCaption);
     components.push(renderCircle);
+    components.push(renderRGBBar);
 
     updateState((s) => s);
 
     container.appendChild(rgbView);
     container.appendChild(canvas);
     container.appendChild(circle);
+    container.appendChild(rgbBar);
     /*
     canvas.addEventListener('mousemove', (e) => {
         const [x, y] = [e.offsetX, e.offsetY];
