@@ -1,3 +1,5 @@
+import { createColorCircle, createRGBBar, createRGBView, createPCCSToneView } from './components'
+
 document.addEventListener('DOMContentLoaded', () => {
     init();
 });

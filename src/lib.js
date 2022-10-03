@@ -1,31 +1,31 @@
 
-function rgb2str(rgbArray) {
+export function rgb2str(rgbArray) {
     return "#" + rgbArray.map(v => (v + 256).toString(16).slice(1)).join("")
 }
-function str2rgb(str) {
+export function str2rgb(str) {
     function f(s2) {
         return parseInt(s2, 16)
     }
     return [1, 3, 5].map(i => f(str.slice(i, i + 2)))
 }
 
-function colorDist(rgb1, rgb2) {
+export function colorDist(rgb1, rgb2) {
     const d2 = [0, 1, 2].map(i => rgb1[i] - rgb2[i]).reduce((res, x) => res + x * x, 0);
     return Math.sqrt(d2);
 }
 
-function norm2PI(a) {
+export function norm2PI(a) {
     const pi2 = Math.PI * 2;
     return ((a % pi2) + pi2) % pi2
 }
 
-function colorInDiv(rgb1, rgb2, r) {
+export function colorInDiv(rgb1, rgb2, r) {
     return [0, 1, 2].map(i => {
         return Math.max(0, Math.min(255, Math.round(rgb1[i] * r + rgb2 * (1 - r))));
     });
 }
 
-function rgb2hsv(rgb) {
+export function rgb2hsv(rgb) {
     const hGroup = [
         "01", // r->y
         "10", // y->g
@@ -58,7 +58,7 @@ function rgb2hsv(rgb) {
         return [h, s, v];
     }
 }
-function hsv2rgb(hsv) {
+export function hsv2rgb(hsv) {
     const [h, s, v] = hsv;
     const hGroup = ["01", "10", "12", "21", "20", "02",]
     const hg = Math.floor(h / 60);

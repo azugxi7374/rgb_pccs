@@ -1,4 +1,8 @@
-function createRGBView(width, updateState) {
+import { rgb2str, str2rgb, rgb2hsv, norm2PI, hsv2rgb, colorDist, } from './lib'
+import { TONE_NO_LIST } from './data'
+
+const toneMap = window.toneMap;
+export function createRGBView(width, updateState) {
     const div = document.createElement('div');
     div.style = `width:${width}px; height: 2em;`
 
@@ -20,7 +24,7 @@ function createRGBView(width, updateState) {
     }
 }
 
-function createColorCircle(width, updateState) {
+export function createColorCircle(width, updateState) {
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = width * 1;
@@ -162,7 +166,7 @@ function createColorCircle(width, updateState) {
     }
 }
 
-function createPCCSToneView(width, updateState) {
+export function createPCCSToneView(width, updateState) {
     const canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = width * 1;
@@ -192,7 +196,7 @@ function createPCCSToneView(width, updateState) {
             ctx.fillStyle = clr;
 
             ctx.fill();
-            if (parseInt(hue) == i + 1) {
+            if (parseInt(hue) === i + 1) {
                 ctx.strokeStyle = "#222222";
                 ctx.lineWidth = 3;
                 ctx.stroke();
@@ -334,7 +338,7 @@ function createPCCSToneView(width, updateState) {
     }
 }
 
-function createRGBBar(width, updateState) {
+export function createRGBBar(width, updateState) {
     const div = document.createElement('div');
     div.style = `width:${width}px; height: 6em;`
     div.className = "container_rgbbar"
