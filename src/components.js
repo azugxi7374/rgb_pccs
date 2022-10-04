@@ -2,26 +2,21 @@ import { rgb2str, str2rgb, rgb2hsv, norm2PI, hsv2rgb, colorDist, } from './lib'
 import { TONE_NO_LIST } from './data'
 
 const toneMap = window.toneMap;
-export function createRGBView(width, updateState) {
-    const div = document.createElement('div');
-    div.style = `width:${width}px; height: 2em;`
-
-    function render({ rgb }) {
-        const rgbstr = rgb2str(rgb);
-        div.innerHTML = `
-            <span style="color:${rgbstr};">\u{25a0}</span>
-            <span>${rgbstr}</span>
-            <input type="color" value="${rgbstr}">
-        `
-        const input = div.querySelector('input');
-        input.addEventListener('change', (e) => {
-            updateState((s) => ({ ...s, rgb: str2rgb(e.target.value) }));
-        });
+export function RGBView({ width, rgb, setRGB }) {
+    const rgbstr = rgb2str(rgb);
+    function onChange(e) {
+        setRGB(str2rgb(e.target.value))
     }
-    return {
-        elem: div,
-        render,
-    }
+    return (
+        <div style={{ width: `${width}px`, height: "2em" }}>
+            <span style={{ color: rgbstr }}>
+                {"\u{25a0}"}
+            </span>
+            <span>{rgbstr}</span>
+            <input type="color" value={rgbstr}
+                onChange={onChange}></input>
+        </div >
+    )
 }
 
 export function createColorCircle(width, updateState) {
@@ -338,26 +333,22 @@ export function createPCCSToneView(width, updateState) {
     }
 }
 
-export function createRGBBar(width, updateState) {
-    const div = document.createElement('div');
-    div.style = `width:${width}px; height: 6em;`
-    div.className = "container_rgbbar"
-    function render({ rgb }) {
-        let s = "";
-        const w = width - 10;
-        for (let i = 0; i < 3; i++) {
-            const rgbstr = "RGB".charAt(i);
-            const c = "#" + ("ff0000,00ff00,0000ff".split(",")[i])
-            s += `<div style="width:${w * rgb[i] / 255}px;
-            background:${c};">
-            ${rgbstr}:${rgb[i]}
-            </div>`
-        }
-        div.innerHTML = s;
-    }
+export function RGBBar({ width, rgb, setRGB }) {
+    const w = width - 10;
 
-    return {
-        render,
-        elem: div,
-    }
+    const elemList = [0, 1, 2].map(i => {
+        const rgbstr = "RGB".charAt(i);
+        const c = "#" + ("ff0000,00ff00,0000ff".split(",")[i])
+
+        return (<div key={i} style={{
+            width: (w * rgb[i] / 255) + "px",
+            background: c
+        }}>
+            {rgbstr}:{rgb[i]}
+        </div>)
+    });
+
+    return <div className="container_rgbbar" style={{ width: width + "px", height: "6em" }}>
+        {elemList}
+    </div>
 }
