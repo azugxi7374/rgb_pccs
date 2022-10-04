@@ -2,6 +2,8 @@ import React from 'react';
 import { useState } from 'react';
 import ReactDOM from 'react-dom/client'
 import { createColorCircle, createPCCSToneView, createRGBBar, createRGBView, RGBBar, RGBView } from './components';
+import { ColorCircle } from './components/ColorCircle';
+import { PCCSToneView } from './components/PCCSToneView';
 
 document.addEventListener('DOMContentLoaded', () => {
     init();
@@ -22,6 +24,8 @@ function App() {
     const [rgb, setRGB] = useState(initialState.rgb);
     return <div className="App">
         <RGBView {... { width: 400, rgb, setRGB }} />
+        <PCCSToneView {... { width: 400, rgb, setRGB }} />
+        <ColorCircle {... { width: 400, rgb, setRGB }} />
         <RGBBar {... { width: 400, rgb, setRGB }} />
     </div>
 }
