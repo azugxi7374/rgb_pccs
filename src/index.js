@@ -19,14 +19,17 @@ function init() {
         </React.StrictMode>
     );
 }
-const initialState = { rgb: [255, 255, 0] }
+const initialState = { rgb: [255, 255, 0], confirmedRGB: [255, 255, 0] }
 function App() {
     const [rgb, setRGB] = useState(initialState.rgb);
+    const [confirmedRGB, setConfirmedRGB] = useState(initialState.confirmedRGB);
+    const setBoth = (_rgb) => { setRGB(_rgb); setConfirmedRGB(_rgb) }
+
     return <div className="App">
-        <RGBView {... { width: 400, rgb, setRGB }} />
-        <PCCSToneView {... { width: 400, rgb, setRGB }} />
-        <ColorCircle {... { width: 400, rgb, setRGB }} />
-        <RGBBar {... { width: 400, rgb, setRGB }} />
+        <RGBView {... { width: 400, rgb, setRGB: setBoth }} />
+        <PCCSToneView {... { width: 400, rgb, setRGB, confirmedRGB, setConfirmedRGB }} />
+        <ColorCircle {... { width: 400, rgb, setRGB, confirmedRGB, setConfirmedRGB }} />
+        <RGBBar {... { width: 400, rgb, setRGB: setBoth }} />
     </div>
 }
     /*

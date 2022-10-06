@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react';
 import { rgb2str, str2rgb, rgb2hsv, norm2PI, hsv2rgb, colorDist, } from '../lib'
 
-export function ColorCircle({ width, rgb, setRGB }) {
+export function ColorCircle({ width, rgb, setRGB, confirmedRGB, setConfirmedRGB }) {
     const canvas = useRef(null);
 
     const r1 = Math.floor(width / 2);
@@ -13,7 +13,7 @@ export function ColorCircle({ width, rgb, setRGB }) {
     const circle = createCircle(x0, y0, r1, r2, rgb);
     const rect = createRect(x0, y0, r3, rgb);
 
-    function handle(reactEv) {
+    function handleEvent(reactEv, confirmFlg) {
         const e = reactEv.nativeEvent
         e.preventDefault();
         const mx = e.offsetX, my = e.offsetY;
@@ -23,6 +23,9 @@ export function ColorCircle({ width, rgb, setRGB }) {
                     mx, my, rgb
                 });
                 setRGB(rgb2);
+                if (confirmFlg) {
+                    setConfirmedRGB(rgb2);
+                }
             }
         }
     }
@@ -39,7 +42,9 @@ export function ColorCircle({ width, rgb, setRGB }) {
 
     return (
         <canvas ref={canvas} width={width} height={width * 1}
-            onClick={handle}
+            onClick={(ev) => handleEvent(ev, true)}
+            onMouseMove={(ev) => handleEvent(ev, false)}
+            onMouseLeave={() => setRGB(confirmedRGB)}
         />
     )
 }

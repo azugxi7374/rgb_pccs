@@ -4,7 +4,7 @@ import { TONE_NO_LIST } from '../data';
 
 const toneMap = window.toneMap;
 
-export function PCCSToneView({ width, rgb, setRGB }) {
+export function PCCSToneView({ width, rgb, setRGB, confirmedRGB, setConfirmedRGB }) {
     const canvas = useRef(null);
     const r1 = Math.floor(width / 2);
     const [x0, y0] = [r1, r1];
@@ -19,7 +19,7 @@ export function PCCSToneView({ width, rgb, setRGB }) {
     elemList.push(...createHues(x0, y0, r1, r2, hue, tone));
     elemList.push(...createTones(x0, y0, r2, hue, tone));
 
-    function handle(reactEv) {
+    function handleEvent(reactEv, confirmFlg) {
         const e = reactEv.nativeEvent;
         const mx = e.offsetX;
         const my = e.offsetY
@@ -28,9 +28,13 @@ export function PCCSToneView({ width, rgb, setRGB }) {
                 const { tone: tone2, hue: hue2 } = changeToneHue();
                 const rgb2 = str2rgb(toneMap[`${tone2}${hue2}`])
                 setRGB(rgb2);
+                if (confirmFlg) {
+                    setConfirmedRGB(rgb2);
+                }
             }
         }
     }
+
     function render() {
         const ctx = canvas.current.getContext('2d')
         ctx.clearRect(0, 0, width, width);
@@ -41,7 +45,9 @@ export function PCCSToneView({ width, rgb, setRGB }) {
     useEffect(render);
     return (
         <canvas ref={canvas} width={width} height={width * 1}
-            onClick={handle}
+            onClick={(ev) => handleEvent(ev, true)}
+            onMouseMove={(ev) => handleEvent(ev, false)}
+            onMouseLeave={() => setRGB(confirmedRGB)}
         />)
 }
 
