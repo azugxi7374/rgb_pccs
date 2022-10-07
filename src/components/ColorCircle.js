@@ -1,6 +1,6 @@
 
 import { useEffect, useRef } from 'react';
-import { rgb2str, str2rgb, rgb2hsv, norm2PI, hsv2rgb, colorDist, } from '../lib'
+import { rgb2str, rgb2hsv, norm2PI, hsv2rgb } from '../lib'
 
 export function ColorCircle({ width, rgb, setRGB, confirmedRGB, setConfirmedRGB }) {
     const canvas = useRef(null);

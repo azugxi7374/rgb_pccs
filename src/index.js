@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
 import ReactDOM from 'react-dom/client'
-import { createColorCircle, createPCCSToneView, createRGBBar, createRGBView, RGBBar, RGBView } from './components';
+import { RGBBar, RGBView } from './components';
 import { ColorCircle } from './components/ColorCircle';
 import { PCCSToneView } from './components/PCCSToneView';
 

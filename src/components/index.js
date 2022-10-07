@@ -1,5 +1,4 @@
-import { rgb2str, str2rgb, rgb2hsv, norm2PI, hsv2rgb, colorDist, } from '../lib'
-import { TONE_NO_LIST } from '../data'
+import { rgb2str, str2rgb } from '../lib'
 
 export function RGBView({ width, rgb, setRGB }) {
     const rgbstr = rgb2str(rgb);
