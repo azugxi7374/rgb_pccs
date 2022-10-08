@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "//azugxi7374.github.io/rgb_pccs/static/js/main.06bf9490.js",
-    "index.html": "//azugxi7374.github.io/rgb_pccs/index.html",
-    "main.06bf9490.js.map": "//azugxi7374.github.io/rgb_pccs/static/js/main.06bf9490.js.map"
+    "main.js": "./static/js/main.ce310417.js",
+    "index.html": "./index.html",
+    "main.ce310417.js.map": "./static/js/main.ce310417.js.map"
   },
   "entrypoints": [
-    "static/js/main.06bf9490.js"
+    "static/js/main.ce310417.js"
   ]
 }
