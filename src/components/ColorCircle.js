@@ -1,4 +1,5 @@
 
+import Hammer from 'hammerjs';
 import { useEffect, useRef } from 'react';
 import { rgb2str, rgb2hsv, norm2PI, hsv2rgb } from '../lib'
 
@@ -13,10 +14,19 @@ export function ColorCircle({ width, rgb, setRGB, confirmedRGB, setConfirmedRGB 
     const circle = createCircle(x0, y0, r1, r2, rgb);
     const rect = createRect(x0, y0, r3, rgb);
 
-    function handleEvent(reactEv, confirmFlg) {
+    function handleMouse(reactEv, confirmFlg) {
         const e = reactEv.nativeEvent
         e.preventDefault();
         const mx = e.offsetX, my = e.offsetY;
+        handle(mx, my, confirmFlg);
+    }
+    function handlePanMove(ev) {
+        window._ev = ev;
+        console.log(ev.center.x, ev.center.y, ev.srcEvent.offsetX, ev.srcEvent.offsetY);
+        // handle(ev.center.x, ev.center.y, false);
+        handle(ev.srcEvent.offsetX, ev.srcEvent.offsetY, true);
+    }
+    function handle(mx, my, confirmFlg) {
         for (const elem of [circle, rect]) {
             if (elem.contains({ mx, my })) {
                 const rgb2 = elem.changeColor({
@@ -36,14 +46,23 @@ export function ColorCircle({ width, rgb, setRGB, confirmedRGB, setConfirmedRGB 
         circle.render(ctx);
         rect.render(ctx);
     }
+    function addHammer() {
+        const mc = new Hammer(canvas.current);
+        mc.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+        mc.on('panstart', handlePanMove);
+        mc.on('panmove', handlePanMove);
+        mc.on('panend', handlePanMove);
+    }
 
-    useEffect(render)
-
+    useEffect(() => {
+        render();
+        addHammer();
+    })
 
     return (
         <canvas ref={canvas} width={width} height={width * 1}
-            onClick={(ev) => handleEvent(ev, true)}
-            onMouseMove={(ev) => handleEvent(ev, false)}
+            onClick={(ev) => handleMouse(ev, true)}
+            onMouseMove={(ev) => handleMouse(ev, false)}
             onMouseLeave={() => setRGB(confirmedRGB)}
         />
     )
