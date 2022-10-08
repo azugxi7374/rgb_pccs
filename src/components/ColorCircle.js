@@ -3,8 +3,11 @@ import Hammer from 'hammerjs';
 import { useEffect, useRef } from 'react';
 import { rgb2str, rgb2hsv, norm2PI, hsv2rgb } from '../lib'
 
+let _rgb = null;
 export function ColorCircle({ width, rgb, setRGB, confirmedRGB, setConfirmedRGB }) {
+    _rgb = rgb;
     const canvas = useRef(null);
+    const canvasMc = useRef([null, null]);
 
     const r1 = Math.floor(width / 2);
     const [x0, y0] = [r1, r1];
@@ -21,16 +24,13 @@ export function ColorCircle({ width, rgb, setRGB, confirmedRGB, setConfirmedRGB 
         handle(mx, my, confirmFlg);
     }
     function handlePanMove(ev) {
-        window._ev = ev;
-        console.log(ev.center.x, ev.center.y, ev.srcEvent.offsetX, ev.srcEvent.offsetY);
-        // handle(ev.center.x, ev.center.y, false);
-        handle(ev.srcEvent.offsetX, ev.srcEvent.offsetY, true);
+        handle(parseInt(ev.srcEvent.offsetX), parseInt(ev.srcEvent.offsetY), true);
     }
     function handle(mx, my, confirmFlg) {
         for (const elem of [circle, rect]) {
             if (elem.contains({ mx, my })) {
                 const rgb2 = elem.changeColor({
-                    mx, my, rgb
+                    mx, my, rgb: _rgb
                 });
                 setRGB(rgb2);
                 if (confirmFlg) {
@@ -47,17 +47,31 @@ export function ColorCircle({ width, rgb, setRGB, confirmedRGB, setConfirmedRGB 
         rect.render(ctx);
     }
     function addHammer() {
-        const mc = new Hammer(canvas.current);
-        mc.get('pan').set({ direction: Hammer.DIRECTION_ALL });
-        mc.on('panstart', handlePanMove);
-        mc.on('panmove', handlePanMove);
-        mc.on('panend', handlePanMove);
+        const [prevElem, prevMc] = canvasMc.current;
+        if (prevElem === canvas.current) {
+            // skip
+        } else {
+            if (prevMc) {
+                prevMc.stop();
+                prevMc.destroy();
+            }
+            const mc = new Hammer(canvas.current);
+            mc.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+            mc.on('panstart', handlePanMove);
+            mc.on('panmove', handlePanMove);
+            mc.on('panend', handlePanMove);
+
+            canvasMc.current = [canvas.current, mc];
+        }
+        // cleanup
+        // return () => {
+        // mc.stop();
+        // mc.destroy();
+        // }
     }
 
-    useEffect(() => {
-        render();
-        addHammer();
-    })
+    useEffect(render);
+    useEffect(addHammer);
 
     return (
         <canvas ref={canvas} width={width} height={width * 1}
