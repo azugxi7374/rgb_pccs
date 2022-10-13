@@ -25,7 +25,7 @@ function App() {
     const [confirmedRGB, setConfirmedRGB] = useState(initialState.confirmedRGB);
     const setBoth = (_rgb) => { setRGB(_rgb); setConfirmedRGB(_rgb) }
 
-    return <div className="App">
+    return <div className="app">
         <RGBView {... { width: 400, rgb, setRGB: setBoth }} />
         <PCCSToneView {... { width: 400, rgb, setRGB, confirmedRGB, setConfirmedRGB }} />
         <ColorCircle {... { width: 400, rgb, setRGB, confirmedRGB, setConfirmedRGB }} />

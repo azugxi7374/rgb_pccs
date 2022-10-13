@@ -1,10 +1,14 @@
-#container {
+@media screen and (max-width: 768px) {
+    /* sp */
+}
+
+#app {
     display: flex;
     align-items: flex-start;
     flex-direction: column;
 }
 
-#container>* {
+#app>* {
     margin-bottom: 20px;
     margin-left: 20px;
 }
