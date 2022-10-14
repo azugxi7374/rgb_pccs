@@ -122,7 +122,8 @@ function createCircle(x0, y0, r1, r2, rgb) {
         const mr = Math.sqrt(dx * dx + dy * dy);
         return r2 <= mr && mr <= r1;
     }
-    function changeColor({ mx, my }) {
+    function changeColor({ mx, my, rgb }) {
+        const hsv = rgb2hsv(rgb);
         const dx = mx - x0;
         const dy = my - y0;
         const a = norm2PI(Math.atan2(dy, dx));
