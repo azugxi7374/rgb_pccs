@@ -13,14 +13,19 @@
         }
 
         #root {
-            max-height: 100%;
-            max-width: 100%;
-            aspect-ratio: 9 / 16;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        #container {
+            flex: auto;
             display: flex;
             flex-direction: column;
         }
 
-        #root>* {
+        #container>* {
             background-color: #aaa;
             box-sizing: content-box;
             border: 1px solid;
@@ -45,39 +50,79 @@
 
         .content-3 {
             flex: 2;
+            display: flex;
+        }
+
+        .content-3-left {
+            flex: 1;
+        }
+
+        .content-3-right {
+            display: flex;
+            flex: 2;
+            flex-direction: column;
+        }
+
+        .content-3-bar {
+            flex: 1;
+            display: flex;
+        }
+
+        .content-3-bar>*:not(:first-child) {
+            margin-left: 10px;
+        }
+
+        .range {
+            width: 100%;
+            height: 100%;
+            background: blue;
         }
 
         #footer {
-            flex: 1;
-            width: 100vh;
+            padding: 0.5em;
+            width: 100vw;
         }
     </style>
 </head>
 
 <body>
     <div id="root">
-        <div class="content content-1">
-            <div class="content-label">
-                <div class="label-btn">PCCS</div>
+        <div id="container">
+            <div class="content content-1">
+                <div class="content-label">
+                    <div class="label-btn">PCCS</div>
+                </div>
+                <div class="content-circle">
+                    <div class="content-circle-img"></div>
+                </div>
             </div>
-            <div class="content-circle">
-                <div class="content-circle-img"></div>
+            <div class="content content-1">
+                <div class="content-label">
+                    <div class="label-btn">Color Circle</div>
+                </div>
+                <div class="content-circle">
+                    <div class="content-circle-img"></div>
+                </div>
             </div>
-        </div>
-        <div class="content content-1">
-            <div class="content-label">
-                <div class="label-btn">Color Circle</div>
-            </div>
-            <div class="content-circle">
-                <div class="content-circle-img"></div>
-            </div>
-        </div>
-        <div class="content content-3">
-            <div class="content-3-left"></div>
-            <div class="content-3-right">
-                <div class="content-3-bar"></div>
-                <div class="content-3-bar"></div>
-                <div class="content-3-bar"></div>
+            <div class="content content-3">
+                <div class="content-3-left"></div>
+                <div class="content-3-right">
+                    <div class="content-3-bar">
+                        <label>X</label>
+                        <div class="range" value="255"></div>
+                        <div class="value">255</div>
+                    </div>
+                    <div class="content-3-bar">
+                        <label>X</label>
+                        <div class="range" value="255"></div>
+                        <div class="value">255</div>
+                    </div>
+                    <div class="content-3-bar">
+                        <label>X</label>
+                        <div class="range" value="255"></div>
+                        <div class="value">255</div>
+                    </div>
+                </div>
             </div>
         </div>
         <div id="footer">footer github</div>

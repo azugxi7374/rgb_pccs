@@ -25,14 +25,22 @@ function App() {
     const [confirmedRGB, setConfirmedRGB] = useState(initialState.confirmedRGB);
     const setBoth = (_rgb) => { setRGB(_rgb); setConfirmedRGB(_rgb) }
 
-    return <div className="app">
-        <RGBView {... { width: 400, rgb, setRGB: setBoth }} />
-        <PCCSToneView {... { width: 400, rgb, setRGB, confirmedRGB, setConfirmedRGB }} />
-        <ColorCircle {... { width: 400, rgb, setRGB, confirmedRGB, setConfirmedRGB }} />
-        <RGBBar {... { width: 400, rgb, setRGB: setBoth }} />
-    </div>
+    return <>
+        <div className="app">
+            <PCCSToneView {... { width: 400, rgb, setRGB, confirmedRGB, setConfirmedRGB }} />
+            <ColorCircle {... { width: 400, rgb, setRGB, confirmedRGB, setConfirmedRGB }} />
+            <RGBView {... { width: 400, rgb, setRGB: setBoth }} />
+            <RGBBar {... { width: 400, rgb, setRGB: setBoth }} />
+        </div>
+        <Footer />
+    </>
 }
-    /*
+function Footer() {
+    return <div className="footer"></div>
+}
+
+
+/*
 const components = [];
 let state = { rgb: [255, 255, 0], tmpRGB: null };
 const updateState = (updFunc) => {
